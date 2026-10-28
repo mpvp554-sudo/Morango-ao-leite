@@ -1,0 +1,32 @@
+@echo off
+title PC Virtual - Ryzen 7 / 16GB RAM
+set QEMU=C:\Program Files\qemu\qemu-system-x86_64.exe
+set VM=C:\PCVirtual
+set DISK=%VM%\disco.qcow2
+
+if not exist "%VM%" mkdir "%VM%"
+
+if not exist "%DISK%" (
+    echo Criando disco virtual de 100 GB...
+    "%QEMU%" -drive file="%DISK%",format=qcow2
+)
+
+echo.
+echo Iniciando PC virtual...
+echo RAM: 16 GB
+echo CPU: 8 nucleos
+echo Disco: 100 GB
+echo.
+
+"%QEMU%" ^
+ -machine q35,accel=whpx ^
+ -cpu max ^
+ -smp 8 ^
+ -m 16G ^
+ -drive file="%DISK%",if=virtio,format=qcow2 ^
+ -device virtio-vga ^
+ -net nic,model=virtio ^
+ -net user ^
+ -boot menu=on
+
+pause
